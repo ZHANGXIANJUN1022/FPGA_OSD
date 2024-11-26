@@ -8,14 +8,11 @@ word_len = 2; #若是16*16的字体，word_len 等于2 ，32*32则是4，以此�
 with open(input_file_path, 'r', encoding='utf-8') as file:
     lines = file.readlines()
     
-modified_lines = []  # 存储注释行
 binary_lines = []    # 存储二进制结果
 
 for line in lines:
     line = line.strip()
-    if "/*" in line:  # 替换带有 /* 的行
-        modified_lines.append(line.replace("/*", "//"))
-    else:
+    if "/*" not in line: 
         # 提取十六进制数
         hex_numbers = [num.strip() for num in line.split(",") if num.strip().startswith("0x")]
         # 按 word_len 处理成指定宽度的二进制数
@@ -25,6 +22,7 @@ for line in lines:
                 # 拼接二进制
                 binary_data = ''.join(bin(int(h, 16))[2:].zfill(8) for h in hex_group)
                 binary_lines.append(binary_data)
+        
 
 # 写入 MIF 文件
 width = word_len * 8  # 每行数据宽度
