@@ -1,12 +1,12 @@
 ////////////////////////////////////////////////////////////////////////////////
-// Company : KonKA
+// Company : 
 // Engineer: Zhangxianjun
 //
 // Create Date: 24/10/30                         
 // Design Name: OSD     
 // Module Name: pattern_gen_demo          
-// Target Device: 10AX115N3F40E2SG             
-// Tool versions: quartus 21.4              
+// Target Device:            
+// Tool versions:            
 // Description:   This model is used to generate the UI according to the ram                             
 //
 // Dependencies:                              
@@ -56,8 +56,6 @@ localparam FRONT_B = 10'h3FF;
 localparam HLIGHT_R = 10'h3ff;
 localparam HLIGHT_G = 10'h000;
 localparam HLIGHT_B = 10'h000;
-//color[1] = select or not for blank
-//color[0] = hight light or not for no blank
 
 
 //data input
@@ -180,7 +178,7 @@ reg [9:0]o_data_0b_5;
 
 always@(posedge clk)
 begin
-
+	//The words is highlighted or not
 	o_data_0r_1 <= {10{osd_color_d4[0]}} & HLIGHT_R;
 	o_data_0r_2 <= {10{!osd_color_d4[0]}} & FRONT_R;
 
@@ -190,7 +188,7 @@ begin
     o_data_0b_1 <= {10{osd_color_d4[0]}} & HLIGHT_B;
 	o_data_0b_2 <= {10{!osd_color_d4[0]}} & FRONT_B;
 
-    if(osd_color_d4[2])begin
+    if(osd_color_d4[2])begin //The select rows display data beyond the words.
         o_data_0r_3 <= 10'd0;
         o_data_0r_4 <= 10'd0;
         o_data_0r_5 <= SELE_R;
@@ -204,7 +202,7 @@ begin
         o_data_0b_4 <= 10'd0;
         o_data_0b_5 <= SELE_B;     
     end
-    else begin
+    else begin// overlay region
         o_data_0r_3 <= {10{!osd_color_d4[1]}} & (i_data_0r_d4>>2);
         o_data_0r_4 <= {10{!osd_color_d4[1]}} & BACK_R + {10{osd_color_d4[1]}} & BACK_R_H;
         o_data_0r_5 <= 10'd0;
@@ -218,9 +216,6 @@ begin
         o_data_0b_4 <= {10{!osd_color_d4[1]}} & BACK_B + {10{osd_color_d4[1]}} & BACK_B_H;;
         o_data_0b_5 <= 10'd0;
     end
-    //o_data_0r <= (i_data_0r_d4>>2); 
-	//o_data_0g <= (i_data_0g_d4>>2); 
-	//o_data_0b <= (i_data_0b_d4>>2); 
 end
 //////////////////////////////////////////////////////////////////////delay 1
 //data0
@@ -229,25 +224,21 @@ reg [9:0]o_data_0g;
 reg [9:0]o_data_0b;
 always@(posedge clk)
 begin
-	if (usr_data[7]) begin
+	if (usr_data[7]) begin//just show OSD 
 		o_data_0r <= o_data_0r_1 + o_data_0r_2;
 		o_data_0g <= o_data_0g_1 + o_data_0g_2;
 		o_data_0b <= o_data_0b_1 + o_data_0b_2;
 	end
-	else begin
+	else begin//overlay
 		o_data_0r <= o_data_0r_3 + o_data_0r_4  + o_data_0r_5; 
 		o_data_0g <= o_data_0g_3 + o_data_0g_4  + o_data_0g_5; 
 		o_data_0b <= o_data_0b_3 + o_data_0b_4  + o_data_0b_5; 
 	end
-    //o_data_0r <= (i_data_0r_d4>>2); 
-	//o_data_0g <= (i_data_0g_d4>>2); 
-	//o_data_0b <= (i_data_0b_d4>>2); 
 end
 //////////////////////////////////////////////////////////////////////delay 1
 always@(posedge clk)
 begin
 	if (osd_en_d6) begin
-    //if (1'b1) begin
 		o_data <= {o_data_0r,o_data_0g,o_data_0b,
 				   30'd0,
 				   30'd0,

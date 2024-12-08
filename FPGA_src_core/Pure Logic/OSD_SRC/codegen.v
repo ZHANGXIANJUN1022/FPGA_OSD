@@ -1,4 +1,19 @@
-
+////////////////////////////////////////////////////////////////////////////////
+// Company : 
+// Engineer: 
+//
+// Create Date: 24/10/30                         
+// Design Name: OSD     
+// Module Name: codegen          
+// Target Device:       
+// Tool versions:             
+// Description:   This model is used to generate the UI INFORMATION                        
+//
+// Dependencies:                              
+// Revision:                                  
+// Additional Comments:
+//      
+////////////////////////////////////////////////////////////////////////////////
 
 module codegen(
 	input 			     clk, //fpga_clk
@@ -11,8 +26,8 @@ module codegen(
     //input      [7 :0]    ep_rvmin,//fine delay adjustment
     //input      [7 :0]    ep_rmode,//display mode
 
-	output reg [19:0]	 osd_code//command[on/off  mode  sel_line  mode1  mode2]
-                                    //      1       2       2        5      9
+	output reg [19:0]	 osd_code//command
+                                    //    
 );
 
 //////////////////////////////////////////
@@ -33,37 +48,39 @@ localparam
     DOWN        = 8'h2C,
     UP          = 8'h2B,
 
-    BACK        = 8'h30,
+    BACK        = 8'h30;
 
-    ONE         = 8'h01,
-    TWO         = 8'h02,
-    THREE       = 8'h03,
-    FOUR        = 8'h04,
-    FIVE        = 8'h05,
-    SIX         = 8'h06,
-    SEVEN       = 8'h07,
-    EIGHT       = 8'h08,
-    NINE        = 8'h09,
-    ZERO        = 8'h00;
+    //ONE         = 8'h01,
+    //TWO         = 8'h02,
+    //THREE       = 8'h03,
+    //FOUR        = 8'h04,
+    //FIVE        = 8'h05,
+    //SIX         = 8'h06,
+    //SEVEN       = 8'h07,
+    //EIGHT       = 8'h08,
+    //NINE        = 8'h09,
+    //ZERO        = 8'h00;
 //state
 localparam
     OFF         = 4'd0,
-    MOD_0       = 4'b1000,//LD 流水灯模式特殊处理，按OK按键退出
-    MOD_1       = 4'b1001,
-    MOD_2       = 4'b1011;//SP
+    MOD_0       = 4'b1000,//界面1 -- 流水灯模式特殊处理，按OK按键退出
+    MOD_1       = 4'b1001,//界面2
+    MOD_2       = 4'b1011;//界面3 -- 目前暂无
 
 /*******************************************************************/
 /*******************************************************************/
 /*******************************************************************/
-reg      sw;
+reg      sw; //指示菜单是否关闭 
 
-reg [1:0]mode;
-reg [1:0]sel_line;
+reg [1:0]mode;//指示目前界面
+reg [1:0]sel_line;//指示目前关标在第几行
 
-reg [4:0]mode1;
+reg [4:0]mode1;//指示目前界面1的相关开关数据
+//指示目前界面2的相关开关数据
 reg      mode2_0;
 reg [3:0]mode2_1;
 reg [3:0]mode2_2;
+reg sw_gamma;//gamma开关
 //state machine --- change display interface step by step
 always @(posedge clk) begin
     current_state <= next_state;
@@ -363,7 +380,6 @@ end
 
 
 //拓展gamma
-reg sw_gamma;
 always @(posedge clk) begin
     if (current_state == MOD_1 && order_en && sel_line == 2'd3) begin
         if(order == OK )begin

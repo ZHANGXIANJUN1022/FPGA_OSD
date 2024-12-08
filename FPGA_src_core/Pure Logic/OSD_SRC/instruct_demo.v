@@ -1,30 +1,28 @@
-
 ////////////////////////////////////////////////////////////////////////////////
-// Company : KonKA
-// Engineer: Zhangxianjun
+// Company : 
+// Engineer: 
 //
 // Create Date: 24/10/30                         
 // Design Name: OSD     
-// Module Name: pattern_gen_demo          
-// Target Device: 10AX115N3F40E2SG             
-// Tool versions: quartus 21.4              
-// Description:   This model is used to generate the UI order                         
+// Module Name: instruct_demo          
+// Target Device:              
+// Tool versions:             
+// Description:   This model is used to generate the UI DISPLAY ORDER                      
 //
 // Dependencies:                              
 // Revision:                                  
-// Additional Comments:
-//      
-
-
+// Additional Comments:      
 ////////////////////////////////////////////////////////////////////////////////
 
 module instruct_demo(
 	input 			    clk, //fpga_clk
-	input 		[19:0]	osd_code,//command[on/off  mode  sel_line  mode1  mode2]
-                                    //      1       2       2        5       9
+
+	//osd_code <= {sw,sw_gamma,mode,sel_line,mode1,mode2_0,mode2_1,mode2_2};
+	//              1    1      2      2       5       1      4       4
+	input 		[19:0]	osd_code,
 
     input 				frame_1st_pxl,
-    input		[8:0]	H_sta,// min scale: pixel_num
+    input		[8:0]	H_sta,//START POINT
     input 		[8:0]	V_sta,
     input       [3:0]	pixel_sum, // 1 2 4  8
 	input 				i_de,
